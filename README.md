@@ -2,27 +2,26 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# mealmap 🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: Girlizz
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Nisha Bharati - MES College of Engineering and Technology,Kunnukara.
 
 ### Hosted Project Link
-[mention your project hosted link here]
+https://tink-her-hack-flax.vercel.app
 
 ### Project Description
-[2-3 lines about what your project does]
+A smart web platform that helps users discover the top-rated restaurants near their location based on reviews, ratings, price range, and preferences. The website provides personalized recommendations and real-time location-based search to make dining decisions faster and easier.
 
 ### The Problem statement
-[What problem are you solving?]
+People often struggle to find the best restaurants nearby due to scattered information across multiple apps, unreliable reviews, and lack of personalized recommendations. This leads to wasted time, poor dining choices, and inconvenience while searching for good food options.
 
 ### The Solution
-[How are you solving it?]
+The platform aggregates restaurant data into one easy-to-use website that shows the best nearby dining options using ratings, user preferences, and location services. It simplifies decision-making by offering filtered recommendations, reviews, and quick navigation to restaurants.
 
 ---
 
@@ -31,25 +30,28 @@
 ### Technologies/Components Used
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
-- Frameworks used: [e.g., React, Django, Spring Boot]
-- Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
+- Languages used: HTML5, CSS3, JavaScript
+- Frameworks used: React (for future expansion)
+- Libraries used: Axios (for API calls), Leaflet (for maps)
+- Tools used: VS Code, Git, Vercel, Node.js
 
 **For Hardware:**
-- Main components: [List main components]
-- Specifications: [Technical specifications]
-- Tools required: [List tools needed]
+- Not applicable (Web-based project)
 
 ---
 
 ## Features
 
-List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+Key features of mealmap:
+
+- **Real-time Location Detection:** GPS-based restaurant discovery within 3 km radius
+- **Multi-language Support:** 8 languages including English, Hindi, Arabic, French, Chinese, Spanish, German, and Japanese
+- **Budget Filter:** Customizable budget range (₹100 - ₹2000) per meal
+- **Restaurant Ratings & Reviews:** Aggregated ratings from verified user reviews
+- **Advanced Filtering:** Filter by cuisine type, price range, delivery time, and user ratings
+- **User Authentication:** Secure email/password signup and social login (Google, Apple)
+- **Personalized Recommendations:** AI-driven suggestions based on user preferences and history
+- **Quick Navigation:** Direct links to restaurant websites, phone numbers, and directions
 
 ---
 
@@ -59,21 +61,28 @@ List the key features of your project:
 
 #### Installation
 ```bash
-[Installation commands - e.g., npm install, pip install -r requirements.txt]
+# Clone the repository
+git clone https://github.com/nishabharati04/tink-her-hack.git
+cd tink-her-hack
+
+# Install dependencies
+npm install
+
+# Install additional packages
+npm install axios leaflet react-leaflet
 ```
 
 #### Run
 ```bash
-[Run commands - e.g., npm start, python app.py]
+# Development server
+npm start
+
+# Build for production
+npm run build
+
+# Deploy to Vercel
+vercel deploy
 ```
-
-### For Hardware:
-
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
 
 ---
 
@@ -83,51 +92,26 @@ List the key features of your project:
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot1](scr1.png)
+*Login & Sign-up flow - User authentication with Google and Apple social login options*
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot2](scr2.png)
+*Language selection and GPS location setup - Multi-language support with automatic location detection*
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot3](scr3.png)
+*Restaurant discovery interface - Budget slider, filters, and nearby restaurant listings with ratings*
 
 #### Diagrams
 
 **System Architecture:**
 
 ![Architecture Diagram](docs/architecture.png)
-*Explain your system architecture - components, data flow, tech stack interaction*
+*Frontend (React) communicates with REST API backend to fetch restaurant data, user preferences stored in database, location services via GPS/manual entry, and integrations with restaurant review platforms*
 
 **Application Workflow:**
 
 ![Workflow](docs/workflow.png)
-*Add caption explaining your workflow*
-
----
-
-### For Hardware:
-
-#### Schematic & Circuit
-
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-#### Build Photos
-
-![Team](Add photo of your team here)
-
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
+*User → Authentication → Language Selection → Location Setup → Budget Preference → Restaurant Feed → Restaurant Details → Booking/Navigation*
 
 ---
 
@@ -137,223 +121,221 @@ List the key features of your project:
 
 #### API Documentation
 
-**Base URL:** `https://api.yourproject.com`
-
+**Base URL:** -
 ##### Endpoints
 
-**GET /api/endpoint**
-- **Description:** [What it does]
-- **Parameters:**
-  - `param1` (string): [Description]
-  - `param2` (integer): [Description]
-- **Response:**
-```json
-{
-  "status": "success",
-  "data": {}
-}
-```
-
-**POST /api/endpoint**
-- **Description:** [What it does]
+**POST /api/auth/signup**
+- **Description:** Register a new user account
 - **Request Body:**
 ```json
 {
-  "field1": "value1",
-  "field2": "value2"
+  "name": "Nisha Bharati",
+  "email": "nisha@example.com",
+  "password": "securePassword123",
+  "language": "en"
 }
 ```
 - **Response:**
 ```json
 {
   "status": "success",
-  "message": "Operation completed"
+  "message": "Account created successfully",
+  "userId": "user_12345",
+  "token": "jwt_token_here"
 }
 ```
 
-[Add more endpoints as needed...]
-
----
-
-### For Mobile Apps:
-
-#### App Flow Diagram
-
-![App Flow](docs/app-flow.png)
-*Explain the user flow through your application*
-
-#### Installation Guide
-
-**For Android (APK):**
-1. Download the APK from [Release Link]
-2. Enable "Install from Unknown Sources" in your device settings:
-   - Go to Settings > Security
-   - Enable "Unknown Sources"
-3. Open the downloaded APK file
-4. Follow the installation prompts
-5. Open the app and enjoy!
-
-**For iOS (IPA) - TestFlight:**
-1. Download TestFlight from the App Store
-2. Open this TestFlight link: [Your TestFlight Link]
-3. Click "Install" or "Accept"
-4. Wait for the app to install
-5. Open the app from your home screen
-
-**Building from Source:**
-```bash
-# For Android
-flutter build apk
-# or
-./gradlew assembleDebug
-
-# For iOS
-flutter build ios
-# or
-xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug
-```
-
----
-
-### For Hardware Projects:
-
-#### Bill of Materials (BOM)
-
-| Component | Quantity | Specifications | Price | Link/Source |
-|-----------|----------|----------------|-------|-------------|
-| Arduino Uno | 1 | ATmega328P, 16MHz | ₹450 | [Link] |
-| LED | 5 | Red, 5mm, 20mA | ₹5 each | [Link] |
-| Resistor | 5 | 220Ω, 1/4W | ₹1 each | [Link] |
-| Breadboard | 1 | 830 points | ₹100 | [Link] |
-| Jumper Wires | 20 | Male-to-Male | ₹50 | [Link] |
-| [Add more...] | | | | |
-
-**Total Estimated Cost:** ₹[Amount]
-
-#### Assembly Instructions
-
-**Step 1: Prepare Components**
-1. Gather all components listed in the BOM
-2. Check component specifications
-3. Prepare your workspace
-![Step 1](images/assembly-step1.jpg)
-*Caption: All components laid out*
-
-**Step 2: Build the Power Supply**
-1. Connect the power rails on the breadboard
-2. Connect Arduino 5V to breadboard positive rail
-3. Connect Arduino GND to breadboard negative rail
-![Step 2](images/assembly-step2.jpg)
-*Caption: Power connections completed*
-
-**Step 3: Add Components**
-1. Place LEDs on breadboard
-2. Connect resistors in series with LEDs
-3. Connect LED cathodes to GND
-4. Connect LED anodes to Arduino digital pins (2-6)
-![Step 3](images/assembly-step3.jpg)
-*Caption: LED circuit assembled*
-
-**Step 4: [Continue for all steps...]**
-
-**Final Assembly:**
-![Final Build](images/final-build.jpg)
-*Caption: Completed project ready for testing*
-
----
-
-### For Scripts/CLI Tools:
-
-#### Command Reference
-
-**Basic Usage:**
-```bash
-python script.py [options] [arguments]
-```
-
-**Available Commands:**
-- `command1 [args]` - Description of what command1 does
-- `command2 [args]` - Description of what command2 does
-- `command3 [args]` - Description of what command3 does
-
-**Options:**
-- `-h, --help` - Show help message and exit
-- `-v, --verbose` - Enable verbose output
-- `-o, --output FILE` - Specify output file path
-- `-c, --config FILE` - Specify configuration file
-- `--version` - Show version information
-
-**Examples:**
-
-```bash
-# Example 1: Basic usage
-python script.py input.txt
-
-# Example 2: With verbose output
-python script.py -v input.txt
-
-# Example 3: Specify output file
-python script.py -o output.txt input.txt
-
-# Example 4: Using configuration
-python script.py -c config.json --verbose input.txt
-```
-
-#### Demo Output
-
-**Example 1: Basic Processing**
-
-**Input:**
-```
-This is a sample input file
-with multiple lines of text
-for demonstration purposes
-```
-
-**Command:**
-```bash
-python script.py sample.txt
-```
-
-**Output:**
-```
-Processing: sample.txt
-Lines processed: 3
-Characters counted: 86
-Status: Success
-Output saved to: output.txt
-```
-
-**Example 2: Advanced Usage**
-
-**Input:**
+**POST /api/auth/login**
+- **Description:** Authenticate user with credentials
+- **Request Body:**
 ```json
 {
-  "name": "test",
-  "value": 123
+  "email": "nisha@example.com",
+  "password": "securePassword123"
 }
 ```
-
-**Command:**
-```bash
-python script.py -v --format json data.json
-```
-
-**Output:**
-```
-[VERBOSE] Loading configuration...
-[VERBOSE] Parsing JSON input...
-[VERBOSE] Processing data...
+- **Response:**
+```json
 {
   "status": "success",
-  "processed": true,
-  "result": {
-    "name": "test",
-    "value": 123,
-    "timestamp": "2024-02-07T10:30:00"
+  "token": "jwt_token_here",
+  "user": {
+    "userId": "user_12345",
+    "name": "Nisha Bharati",
+    "email": "nisha@example.com"
   }
 }
-[VERBOSE] Operation completed in 0.23s
+```
+
+**POST /api/auth/social-login**
+- **Description:** Login via Google or Apple OAuth
+- **Request Body:**
+```json
+{
+  "provider": "google",
+  "token": "oauth_token_here"
+}
+```
+- **Response:**
+```json
+{
+  "status": "success",
+  "token": "jwt_token_here",
+  "user": {
+    "userId": "user_12345",
+    "name": "Nisha Bharati"
+  }
+}
+```
+
+**GET /api/restaurants/nearby**
+- **Description:** Get restaurants near user location
+- **Parameters:**
+  - `latitude` (float): User's latitude
+  - `longitude` (float): User's longitude
+  - `radius` (integer): Search radius in km (default: 3)
+  - `budget` (integer): Max budget in rupees
+  - `cuisine` (string, optional): Cuisine type filter
+- **Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "restaurantId": "rest_001",
+      "name": "Spice Garden",
+      "cuisine": "Indian",
+      "rating": 4.5,
+      "reviews": 245,
+      "priceRange": "₹200-500",
+      "distance": "1.2 km",
+      "latitude": 9.9312,
+      "longitude": 76.2673,
+      "address": "Fort Kochi, Kerala",
+      "phone": "+91-9876543210",
+      "website": "https://spicegarden.com"
+    }
+  ]
+}
+```
+
+**GET /api/restaurants/{restaurantId}**
+- **Description:** Get detailed information about a restaurant
+- **Parameters:**
+  - `restaurantId` (string): Restaurant ID
+- **Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "restaurantId": "rest_001",
+    "name": "Spice Garden",
+    "cuisine": ["Indian", "Kerala"],
+    "rating": 4.5,
+    "totalReviews": 245,
+    "priceRange": "₹200-500",
+    "address": "Fort Kochi, Kerala",
+    "phone": "+91-9876543210",
+    "website": "https://spicegarden.com",
+    "menu": ["https://menu1.jpg", "https://menu2.jpg"],
+    "reviews": [
+      {
+        "userId": "user_456",
+        "userName": "John Doe",
+        "rating": 5,
+        "comment": "Amazing food and ambiance!",
+        "date": "2024-02-05"
+      }
+    ],
+    "openingHours": "10:00 AM - 11:00 PM",
+    "deliveryTime": "30-45 mins"
+  }
+}
+```
+
+**POST /api/restaurants/{restaurantId}/reviews**
+- **Description:** Post a review for a restaurant
+- **Request Body:**
+```json
+{
+  "rating": 4,
+  "comment": "Great food quality and fast service",
+  "userId": "user_12345"
+}
+```
+- **Response:**
+```json
+{
+  "status": "success",
+  "message": "Review posted successfully",
+  "reviewId": "review_789"
+}
+```
+
+**GET /api/users/preferences**
+- **Description:** Get user's saved preferences
+- **Parameters:**
+  - `userId` (string): User ID
+- **Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "userId": "user_12345",
+    "language": "en",
+    "budget": 300,
+    "preferredCuisines": ["Indian", "Italian"],
+    "savedLocations": [
+      {
+        "name": "Home",
+        "latitude": 9.9312,
+        "longitude": 76.2673
+      }
+    ]
+  }
+}
+```
+
+**PUT /api/users/preferences**
+- **Description:** Update user preferences
+- **Request Body:**
+```json
+{
+  "userId": "user_12345",
+  "budget": 500,
+  "preferredCuisines": ["Indian", "Italian", "Chinese"],
+  "language": "hi"
+}
+```
+- **Response:**
+```json
+{
+  "status": "success",
+  "message": "Preferences updated successfully"
+}
+```
+
+**GET /api/search/restaurants**
+- **Description:** Search restaurants by name or cuisine
+- **Parameters:**
+  - `query` (string): Search term
+  - `latitude` (float): User latitude
+  - `longitude` (float): User longitude
+  - `sortBy` (string, optional): "rating", "distance", "price" (default: "rating")
+- **Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "restaurantId": "rest_001",
+      "name": "Spice Garden",
+      "cuisine": "Indian",
+      "rating": 4.5,
+      "distance": "1.2 km"
+    }
+  ]
+}
 ```
 
 ---
@@ -361,59 +343,52 @@ python script.py -v --format json data.json
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
+https://drive.google.com/file/d/1IuyH5L_hfTRMdDNB8XDaVKYBytoJm6x-/view?usp=drive_link
 
-*Explain what the video demonstrates - key features, user flow, technical highlights*
+*The video demonstrates the complete user journey: login/signup process, language selection, GPS location setup, budget customization, restaurant discovery with real-time filtering, and detailed restaurant information with reviews and navigation.*
 
 ### Additional Demos
-[Add any extra demo materials/links - Live site, APK download, online demo, etc.]
+- **Live Site:** https://tink-her-hack-flax.vercel.app
+
+- **GitHub Repository:** https://github.com/Nishabharati04/tink-her-hack
 
 ---
 
 ## AI Tools Used (Optional - For Transparency Bonus)
 
-If you used AI tools during development, document them here for transparency:
+**Tool Used:** GitHub Copilot
 
-**Tool Used:** [e.g., GitHub Copilot, v0.dev, Cursor, ChatGPT, Claude]
-
-**Purpose:** [What you used it for]
-- Example: "Generated boilerplate React components"
-- Example: "Debugging assistance for async functions"
-- Example: "Code review and optimization suggestions"
+**Purpose:** Code generation and development assistance
+- Generated boilerplate React components for authentication
+- Assistance with API integration and error handling
+- JavaScript function optimization for location services
 
 **Key Prompts Used:**
-- "Create a REST API endpoint for user authentication"
-- "Debug this async function that's causing race conditions"
-- "Optimize this database query for better performance"
+- "Create a React component for multi-step form with progress indicators"
+- "Write REST API endpoints for restaurant search with filtering"
+- "Implement GPS location detection in JavaScript"
 
-**Percentage of AI-generated code:** [Approximately X%]
+**Percentage of AI-generated code:** Approximately 25%
 
 **Human Contributions:**
-- Architecture design and planning
-- Custom business logic implementation
-- Integration and testing
-- UI/UX design decisions
-
-*Note: Proper documentation of AI usage demonstrates transparency and earns bonus points in evaluation!*
+- UI/UX design and styling
+- System architecture planning
+- API endpoint design and logic
+- Testing and debugging
+- Database schema design
+- Integration between frontend and backend
 
 ---
 
 ## Team Contributions
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
-- [Name 3]: [Specific contributions - e.g., UI/UX design, Testing, Documentation, etc.]
+- **Nisha Bharati:** Full-stack development, UI/UX design, API integration, frontend implementation, project documentation
 
 ---
 
 ## License
 
-This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LICENSE) file for details.
-
-**Common License Options:**
-- MIT License (Permissive, widely used)
-- Apache 2.0 (Permissive with patent grant)
-- GPL v3 (Copyleft, requires derivative works to be open source)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
