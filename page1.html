@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LocalEat — Welcome</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B35;
+    --gold: #FFB347;
+    --dark: #1A1008;
+    --green: #2D6A4F;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'DM Sans',sans-serif;
+    background: linear-gradient(135deg, #1A1008 0%, #3D1C08 50%, #1A1008 100%);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: radial-gradient(circle, rgba(255,179,71,0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events:none;
+  }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  .brand-logo { text-align:center; margin-bottom:44px; animation:fadeIn .5s ease; }
+  .brand-logo h1 { font-family:'Playfair Display',serif; font-size:clamp(52px,9vw,84px); color:var(--gold); line-height:.9; letter-spacing:-2px; }
+  .brand-logo h1 span { color:var(--saffron); }
+  .brand-logo p { color:#C8A882; font-size:13px; letter-spacing:5px; text-transform:uppercase; margin-top:10px; }
+
+  .auth-card {
+    background:rgba(255,255,255,.055);
+    backdrop-filter:blur(24px);
+    border:1px solid rgba(255,180,80,.18);
+    border-radius:24px;
+    padding:40px;
+    width:100%; max-width:430px;
+    box-shadow:0 24px 80px rgba(0,0,0,.5);
+    animation:fadeIn .5s .1s ease both;
+  }
+
+  .step { display:none; animation:fadeIn .35s ease; }
+  .step.active { display:block; }
+
+  .step-title { font-family:'Playfair Display',serif; font-size:26px; color:var(--gold); margin-bottom:6px; }
+  .step-subtitle { font-size:13px; color:#9A7A60; margin-bottom:24px; }
+
+  .progress-dots { display:flex; gap:6px; margin-bottom:26px; }
+  .pdot { width:8px; height:8px; border-radius:50%; background:rgba(255,180,80,.2); transition:all .3s; }
+  .pdot.active { background:var(--gold); width:24px; border-radius:4px; }
+  .pdot.done { background:var(--green); }
+
+  .input-group { margin-bottom:14px; }
+  .input-group label { display:block; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:#C8A882; margin-bottom:8px; }
+  .input-group input {
+    width:100%; background:rgba(255,255,255,.07); border:1px solid rgba(255,180,80,.22);
+    border-radius:12px; padding:14px 16px; color:#fff; font-size:15px;
+    font-family:'DM Sans',sans-serif; outline:none; transition:border .2s,background .2s;
+  }
+  .input-group input:focus { border-color:var(--gold); background:rgba(255,255,255,.1); }
+  .input-group input::placeholder { color:rgba(255,255,255,.28); }
+
+  .btn-primary {
+    width:100%; background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none; border-radius:12px; padding:15px; color:var(--dark);
+    font-size:15px; font-weight:700; font-family:'DM Sans',sans-serif;
+    cursor:pointer; letter-spacing:.5px; transition:all .25s; margin-top:8px;
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,107,53,.45); }
+
+  .step-sub { font-size:13px; color:#9A7A60; text-align:center; margin-top:14px; }
+  .step-sub a { color:var(--gold); cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+
+  .divider { display:flex; align-items:center; gap:12px; margin:16px 0; }
+  .divider::before,.divider::after { content:''; flex:1; height:1px; background:rgba(255,180,80,.15); }
+  .divider span { font-size:12px; color:#6B5040; }
+
+  .btn-social {
+    width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,180,80,.18);
+    border-radius:12px; padding:12px; color:#C8A882; font-size:14px;
+    font-family:'DM Sans',sans-serif; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    transition:all .2s; margin-bottom:8px;
+  }
+  .btn-social:hover { border-color:rgba(255,180,80,.4); color:var(--gold); }
+
+  /* Language */
+  .lang-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+  .lang-btn {
+    background:rgba(255,255,255,.055); border:2px solid rgba(255,180,80,.18);
+    border-radius:12px; padding:14px 10px; text-align:center; cursor:pointer;
+    transition:all .2s; color:#C8A882; font-size:13px; font-family:'DM Sans',sans-serif;
+  }
+  .lang-btn:hover { border-color:rgba(255,180,80,.5); color:var(--gold); }
+  .lang-btn.selected { background:rgba(255,180,80,.14); border-color:var(--gold); color:var(--gold); }
+  .lang-btn .flag { font-size:26px; display:block; margin-bottom:5px; }
+
+  /* Location */
+  .loc-option {
+    background:rgba(255,255,255,.055); border:2px solid rgba(255,180,80,.18);
+    border-radius:14px; padding:16px 18px; display:flex; align-items:center;
+    gap:14px; cursor:pointer; margin-bottom:10px; transition:all .2s; color:#C8A882;
+    font-family:'DM Sans',sans-serif;
+  }
+  .loc-option:hover { border-color:rgba(255,180,80,.5); color:#E8B87A; }
+  .loc-option.selected { border-color:var(--gold); color:var(--gold); background:rgba(255,180,80,.1); }
+  .loc-option .icon { font-size:26px; flex-shrink:0; }
+  .loc-option .text strong { display:block; font-size:14px; font-weight:600; }
+  .loc-option .text small { font-size:12px; opacity:.65; }
+
+  #manual-input { display:none; margin-top:8px; }
+
+  /* Budget */
+  .budget-wrap { margin-top:18px; }
+  .budget-wrap > label { display:block; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:#C8A882; margin-bottom:10px; }
+  .budget-display { font-size:32px; font-family:'Playfair Display',serif; color:var(--gold); margin-bottom:10px; }
+  .budget-display small { font-size:14px; color:#9A7A60; font-family:'DM Sans',sans-serif; margin-left:6px; }
+  input[type=range] { width:100%; accent-color:var(--saffron); cursor:pointer; }
+  .range-labels { display:flex; justify-content:space-between; font-size:11px; color:#6B5040; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<div class="brand-logo">
+  <h1>Local<span>Eat</span></h1>
+  <p>Taste the City Near You</p>
+</div>
+
+<div class="auth-card">
+
+  <!-- STEP 1: Login -->
+  <div id="step-login" class="step active">
+    <div class="progress-dots">
+      <div class="pdot active"></div><div class="pdot"></div><div class="pdot"></div>
+    </div>
+    <div class="step-title">Welcome back 👋</div>
+    <div class="step-subtitle">Sign in to discover restaurants near you</div>
+    <div class="input-group"><label>Email Address</label><input type="email" placeholder="you@email.com"></div>
+    <div class="input-group"><label>Password</label><input type="password" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="goToStep('step-lang')">Sign In →</button>
+    <div class="divider"><span>or continue with</span></div>
+    <button class="btn-social">🌐 &nbsp;Continue with Google</button>
+    <button class="btn-social">🍎 &nbsp;Continue with Apple</button>
+    <p class="step-sub">New here? <a onclick="goToStep('step-signup')">Create a free account</a></p>
+  </div>
+
+  <!-- STEP 1B: Sign Up -->
+  <div id="step-signup" class="step">
+    <div class="progress-dots">
+      <div class="pdot active"></div><div class="pdot"></div><div class="pdot"></div>
+    </div>
+    <div class="step-title">Create account 🍽️</div>
+    <div class="step-subtitle">Join thousands of food explorers</div>
+    <div class="input-group"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+    <div class="input-group"><label>Email Address</label><input type="email" placeholder="you@email.com"></div>
+    <div class="input-group"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+    <button class="btn-primary" onclick="goToStep('step-lang')">Create Account →</button>
+    <p class="step-sub">Already have one? <a onclick="goToStep('step-login')">Sign in</a></p>
+  </div>
+
+  <!-- STEP 2: Language -->
+  <div id="step-lang" class="step">
+    <div class="progress-dots">
+      <div class="pdot done"></div><div class="pdot active"></div><div class="pdot"></div>
+    </div>
+    <div class="step-title">Your language 🌐</div>
+    <div class="step-subtitle">We'll show menus & reviews in your language</div>
+    <div class="lang-grid">
+      <div class="lang-btn selected" onclick="selectLang(this)"><span class="flag">🇬🇧</span>English</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇮🇳</span>हिंदी</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇸🇦</span>العربية</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇫🇷</span>Français</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇨🇳</span>中文</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇪🇸</span>Español</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇩🇪</span>Deutsch</div>
+      <div class="lang-btn" onclick="selectLang(this)"><span class="flag">🇯🇵</span>日本語</div>
+    </div>
+    <button class="btn-primary" onclick="goToStep('step-location')">Continue →</button>
+    <p class="step-sub"><a onclick="goToStep('step-login')">← Back</a></p>
+  </div>
+
+  <!-- STEP 3: Location + Budget -->
+  <div id="step-location" class="step">
+    <div class="progress-dots">
+      <div class="pdot done"></div><div class="pdot done"></div><div class="pdot active"></div>
+    </div>
+    <div class="step-title">Find food near you 📍</div>
+    <div class="step-subtitle">We'll show restaurants within 3 km of you</div>
+
+    <div class="loc-option selected" id="loc-gps" onclick="selectLoc(this)">
+      <div class="icon">📡</div>
+      <div class="text"><strong>Use my GPS location</strong><small>Automatic — most accurate</small></div>
+    </div>
+    <div class="loc-option" id="loc-manual" onclick="selectLoc(this)">
+      <div class="icon">🔍</div>
+      <div class="text"><strong>Enter location manually</strong><small>Type your area or landmark</small></div>
+    </div>
+    <div class="input-group" id="manual-input">
+      <label>Your Location</label>
+      <input type="text" placeholder="e.g. Fort Kochi, Kerala">
+    </div>
+
+    <div class="budget-wrap">
+      <label>Max budget per meal</label>
+      <div class="budget-display" id="budget-display">₹300<small>per person</small></div>
+      <input type="range" min="100" max="2000" step="50" value="300" oninput="updateBudget(this.value)">
+      <div class="range-labels"><span>₹100</span><span>₹2000</span></div>
+    </div>
+
+    <button class="btn-primary" style="margin-top:22px;" onclick="window.location.href='page2.html'">
+      Find Restaurants 🍛
+    </button>
+    <p class="step-sub"><a onclick="goToStep('step-lang')">← Back</a></p>
+  </div>
+
+</div>
+
+<script>
+const translations = {
+  en: {
+    tagline: "Taste the City Near You",
+    welcome: "Welcome back 👋",
+    signin_sub: "Sign in to discover restaurants near you",
+    email: "Email Address",
+    password: "Password",
+    signin_btn: "Sign In →",
+    or_continue: "or continue with",
+    google: "Continue with Google",
+    apple: "Continue with Apple",
+    no_account: "New here?",
+    create_free: "Create a free account",
+    create_account: "Create account 🍽️",
+    create_sub: "Join thousands of food explorers",
+    fullname: "Full Name",
+    fullname_ph: "Your name",
+    min_pass: "Min. 8 characters",
+    create_btn: "Create Account →",
+    have_account: "Already have one?",
+    signin: "Sign in",
+    language: "Your language 🌐",
+    language_sub: "We'll show menus & reviews in your language",
+    continue: "Continue →",
+    back: "← Back",
+    location: "Find food near you 📍",
+    location_sub: "We'll show restaurants within 3 km of you",
+    gps_location: "Use my GPS location",
+    gps_info: "Automatic — most accurate",
+    manual_location: "Enter location manually",
+    manual_info: "Type your area or landmark",
+    your_location: "Your Location",
+    location_ph: "e.g. Fort Kochi, Kerala",
+    budget: "Max budget per meal",
+    per_person: "per person",
+    find_restaurants: "Find Restaurants 🍛"
+  },
+  hi: {
+    tagline: "अपने पास का स्वाद खोजें",
+    welcome: "स्वागत है 👋",
+    signin_sub: "अपने पास के रेस्तरां खोजने के लिए साइन इन करें",
+    email: "ईमेल पता",
+    password: "पासवर्ड",
+    signin_btn: "साइन इन करें →",
+    or_continue: "या के साथ जारी रखें",
+    google: "गूगल के साथ जारी रखें",
+    apple: "ऐप्पल के साथ जारी रखें",
+    no_account: "नए हैं?",
+    create_free: "एक मुफ़्त खाता बनाएं",
+    create_account: "खाता बनाएं 🍽️",
+    create_sub: "हजारों खाद्य खोजकर्ताओं से जुड़ें",
+    fullname: "पूरा नाम",
+    fullname_ph: "आपका नाम",
+    min_pass: "न्यूनतम 8 वर्ण",
+    create_btn: "खाता बनाएं →",
+    have_account: "पहले से एक खाता है?",
+    signin: "साइन इन करें",
+    language: "आपकी भाषा 🌐",
+    language_sub: "हम मेनू और समीक्षाएं आपकी भाषा में दिखाएंगे",
+    continue: "जारी रखें →",
+    back: "← वापस",
+    location: "आपके पास खाना खोजें 📍",
+    location_sub: "हम आपसे 3 किमी के भीतर रेस्तरां दिखाएंगे",
+    gps_location: "मेरा जीपीएस स्थान का उपयोग करें",
+    gps_info: "स्वचालित — सबसे सटीक",
+    manual_location: "स्थान मैन्युअल रूप से दर्ज करें",
+    manual_info: "अपने क्षेत्र या मील का पत्थर टाइप करें",
+    your_location: "आपका स्थान",
+    location_ph: "उदा. फोर्ट कोच्चि, केरल",
+    budget: "प्रति भोजन अधिकतम बजट",
+    per_person: "प्रति व्यक्ति",
+    find_restaurants: "रेस्तरां खोजें 🍛"
+  }
+};
+
+let currentLang = 'en';
+
+function t(key) {
+  return translations[currentLang]?.[key] || translations.en[key] || key;
+}
+
+function goToStep(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectLang(el) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  
+  const langMap = { '🇬🇧':'en', '🇮🇳':'hi', '🇸🇦':'ar', '🇫🇷':'fr', '🇨🇳':'zh', '🇪🇸':'es', '🇩🇪':'de', '🇯🇵':'ja' };
+  const flag = el.querySelector('.flag').textContent;
+  currentLang = langMap[flag] || 'en';
+  localStorage.setItem('selectedLanguage', currentLang);
+}
+
+function selectLoc(el) {
+  document.querySelectorAll('.loc-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('manual-input').style.display = el.id === 'loc-manual' ? 'block' : 'none';
+}
+
+function updateBudget(val) {
+  document.getElementById('budget-display').innerHTML = '₹' + val + '<small>per person</small>';
+}
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('selectedLanguage');
+  if (saved && saved !== 'en') {
+    currentLang = saved;
+    const langMap = { 'hi':'🇮🇳', 'ar':'🇸🇦', 'fr':'🇫🇷', 'zh':'🇨🇳', 'es':'🇪🇸', 'de':'🇩🇪', 'ja':'🇯🇵' };
+    const flag = langMap[saved];
+    const btn = Array.from(document.querySelectorAll('.lang-btn')).find(b => b.textContent.includes(flag));
+    if (btn) btn.click();
+  }
+});
+</script>
+</body>
+</html>

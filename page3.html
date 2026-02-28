@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LocalEat — Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B35;
+    --gold: #FFB347;
+    --cream: #FFF8F0;
+    --dark: #1A1008;
+    --mid: #4A3728;
+    --soft: #F5E6D3;
+    --green: #2D6A4F;
+    --border: #E8D5C0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; }
+
+  @keyframes fadeIn  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes pulse   { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,53,.4)} 50%{box-shadow:0 0 0 10px rgba(255,107,53,0)} }
+  @keyframes spin    { to{transform:rotate(360deg)} }
+  @keyframes bounce  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  /* TOP BAR */
+  .top-bar {
+    background:var(--dark); padding:0 24px; height:58px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+    border-bottom:1px solid rgba(255,180,80,.1);
+  }
+  .top-bar .logo { font-family:'Playfair Display',serif; color:var(--gold); font-size:22px; cursor:pointer; }
+  .top-bar .logo span { color:var(--saffron); }
+  .back-link {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--saffron); cursor:pointer; font-weight:600;
+    font-size:14px; border:none; background:none;
+    font-family:'DM Sans',sans-serif; transition:opacity .2s;
+  }
+  .back-link:hover { opacity:.7; }
+
+  /* LAYOUT */
+  .page-wrap { max-width:960px; margin:0 auto; padding:36px 24px 60px; }
+  .page-title { font-family:'Playfair Display',serif; font-size:36px; color:var(--dark); margin-bottom:32px; }
+
+  /* STEP NAV */
+  .step-nav { display:flex; align-items:center; margin-bottom:40px; }
+  .snav-item { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+  .snav-num {
+    width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:16px; transition:all .4s;
+    border:2px solid var(--border);
+  }
+  .snav-item.done   .snav-num { background:var(--green); border-color:var(--green); color:#fff; }
+  .snav-item.active .snav-num { background:var(--saffron); border-color:var(--saffron); color:#fff; animation:pulse 1.8s infinite; }
+  .snav-item.pending .snav-num { background:#fff; color:#C8B8A0; }
+  .snav-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-top:6px; color:#9A7A60; }
+  .snav-item.active .snav-label { color:var(--saffron); }
+  .snav-item.done   .snav-label { color:var(--green); }
+  .snav-line { flex:1; height:2px; background:var(--border); margin:0 8px 16px; border-radius:2px; transition:background .4s; }
+  .snav-line.done { background:var(--green); }
+
+  /* CARD */
+  .card { background:#fff; border-radius:20px; border:1px solid var(--border); padding:28px; margin-bottom:22px; animation:fadeIn .35s ease; }
+  .card h3 { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:20px; }
+
+  /* ORDER ITEMS */
+  .order-item { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--border); }
+  .order-item:last-child { border:none; }
+  .oi-left .oi-name { font-weight:600; font-size:14px; }
+  .oi-left .oi-qty  { font-size:12px; color:#9A7A60; margin-top:2px; }
+  .oi-price { font-weight:700; font-size:15px; }
+
+  .qty-ctrl { display:flex; align-items:center; gap:10px; }
+  .qty-btn {
+    width:28px; height:28px; border-radius:7px; border:1.5px solid var(--border);
+    background:#fff; cursor:pointer; font-size:16px; font-weight:700; color:var(--mid);
+    display:flex; align-items:center; justify-content:center; transition:all .2s;
+  }
+  .qty-btn:hover { border-color:var(--saffron); color:var(--saffron); }
+  .qty-num { font-weight:700; min-width:20px; text-align:center; }
+
+  .bill-row { display:flex; justify-content:space-between; padding:7px 0; font-size:14px; color:#6B5040; }
+  .bill-total { display:flex; justify-content:space-between; padding:16px 0 0; border-top:2px solid var(--border); font-size:19px; font-weight:700; }
+
+  /* FORM */
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#9A7A60; margin-bottom:8px; }
+  .field input, .field textarea {
+    width:100%; border:1.5px solid var(--border); border-radius:10px;
+    padding:12px 14px; font-size:14px; font-family:'DM Sans',sans-serif;
+    color:var(--dark); outline:none; background:#fff; transition:border .2s;
+  }
+  .field input:focus, .field textarea:focus { border-color:var(--saffron); }
+  .field textarea { resize:vertical; min-height:72px; }
+
+  /* PAYMENT OPTIONS */
+  .pay-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:22px; }
+  .pay-opt {
+    border:2px solid var(--border); border-radius:14px; padding:18px 14px;
+    cursor:pointer; text-align:center; transition:all .2s;
+  }
+  .pay-opt:hover { border-color:rgba(255,107,53,.4); background:rgba(255,107,53,.04); }
+  .pay-opt.selected { border-color:var(--saffron); background:rgba(255,107,53,.07); }
+  .pay-icon { font-size:30px; margin-bottom:6px; }
+  .pay-label { font-size:13px; font-weight:600; color:var(--mid); }
+
+  .card-fields { margin-top:4px; }
+
+  /* TOTAL SUMMARY BAR */
+  .total-bar {
+    background:var(--soft); border-radius:14px; border:1px solid var(--border);
+    padding:16px 22px; display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:20px;
+  }
+  .total-bar .label { font-size:14px; color:var(--mid); }
+  .total-bar .amount { font-family:'Playfair Display',serif; font-size:26px; color:var(--dark); }
+
+  /* BUTTONS */
+  .btn-main {
+    width:100%; background:linear-gradient(135deg,var(--saffron),var(--gold));
+    border:none; border-radius:14px; padding:17px; font-size:16px; font-weight:700;
+    color:var(--dark); cursor:pointer; font-family:'DM Sans',sans-serif;
+    transition:all .25s; letter-spacing:.4px;
+  }
+  .btn-main:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,107,53,.42); }
+  .btn-ghost {
+    width:100%; background:var(--soft); border:1px solid var(--border);
+    border-radius:14px; padding:14px; font-size:14px; font-weight:600;
+    color:var(--mid); cursor:pointer; font-family:'DM Sans',sans-serif;
+    transition:all .2s; margin-top:10px;
+  }
+  .btn-ghost:hover { border-color:var(--saffron); color:var(--saffron); }
+
+  /* TRACKING */
+  .confirm-banner {
+    text-align:center; padding:32px 20px 24px; border-bottom:1px solid var(--border); margin-bottom:24px;
+  }
+  .confirm-banner .tick { font-size:54px; animation:bounce 1s ease 2; display:block; margin-bottom:12px; }
+  .confirm-banner h3 { font-family:'Playfair Display',serif; font-size:28px; color:var(--green); margin-bottom:6px; }
+  .confirm-banner p  { color:#6B5040; font-size:14px; }
+  .confirm-banner .order-id { font-size:13px; color:#9A7A60; margin-top:4px; }
+
+  .eta-chip {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--soft); border:1px solid var(--border);
+    border-radius:20px; padding:8px 18px; font-size:14px; font-weight:600;
+    color:var(--mid); margin-top:14px;
+  }
+  .eta-chip .spinner { width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--saffron); border-radius:50%; animation:spin 1s linear infinite; }
+
+  /* Timeline */
+  .timeline { position:relative; padding-left:36px; }
+  .timeline::before { content:''; position:absolute; left:13px; top:0; bottom:0; width:2px; background:var(--border); border-radius:2px; }
+  .tl-event { position:relative; padding-bottom:26px; }
+  .tl-event:last-child { padding-bottom:0; }
+  .tl-dot {
+    position:absolute; left:-30px; width:24px; height:24px; border-radius:50%;
+    border:2.5px solid var(--border); background:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:11px; top:0;
+  }
+  .tl-event.done   .tl-dot { background:var(--green); border-color:var(--green); color:#fff; }
+  .tl-event.active .tl-dot { background:var(--saffron); border-color:var(--saffron); animation:pulse 1.8s infinite; }
+  .tl-event.done   .tl-title { color:var(--green); }
+  .tl-event.active .tl-title { color:var(--saffron); }
+  .tl-event.pending .tl-title { color:#C8B8A0; }
+  .tl-title { font-weight:600; font-size:14px; }
+  .tl-time  { font-size:12px; color:#9A7A60; margin-top:3px; }
+
+  .rider-card {
+    background:var(--soft); border-radius:14px; padding:18px 20px;
+    display:flex; align-items:center; gap:16px; margin-top:16px;
+    border:1px solid var(--border);
+  }
+  .rider-avatar { width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--saffron),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+  .rider-info .rider-name { font-weight:700; font-size:15px; }
+  .rider-info .rider-meta { font-size:13px; color:#9A7A60; margin-top:3px; }
+  .call-btn {
+    margin-left:auto; background:var(--green); border:none; border-radius:10px;
+    color:#fff; padding:10px 16px; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-weight:600; font-size:13px; transition:all .2s;
+  }
+  .call-btn:hover { opacity:.85; }
+
+  /* Steps */
+  .step-section { display:none; animation:slideIn .35s ease; }
+  .step-section.active { display:block; }
+
+  @media(max-width:600px) {
+    .form-row  { grid-template-columns:1fr; }
+    .pay-grid  { grid-template-columns:1fr 1fr; }
+    .page-wrap { padding:20px 16px 50px; }
+    .page-title { font-size:28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo" onclick="window.location.href='page1.html'">Local<span>Eat</span></div>
+  <button class="back-link" onclick="window.location.href='page2.html'">← Back to Restaurants</button>
+</div>
+
+<div class="page-wrap">
+  <div class="page-title">Your Order 🛍️</div>
+
+  <!-- STEP PROGRESS -->
+  <div class="step-nav">
+    <div class="snav-item active" id="sn1">
+      <div class="snav-num">1</div>
+      <div class="snav-label">Review</div>
+    </div>
+    <div class="snav-line" id="sl1"></div>
+    <div class="snav-item pending" id="sn2">
+      <div class="snav-num">2</div>
+      <div class="snav-label">Payment</div>
+    </div>
+    <div class="snav-line" id="sl2"></div>
+    <div class="snav-item pending" id="sn3">
+      <div class="snav-num">3</div>
+      <div class="snav-label">Tracking</div>
+    </div>
+  </div>
+
+  <!-- ====== STEP 1: Review ====== -->
+  <div class="step-section active" id="sec1">
+
+    <div class="card">
+      <h3>Order Summary — Al Salam Biryani House</h3>
+
+      <div class="order-item">
+        <div class="oi-left"><div class="oi-name">🍛 Chicken Biryani</div><div class="oi-qty">1 × ₹180</div></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(0,-1)">−</button>
+            <span class="qty-num" id="qty0">1</span>
+            <button class="qty-btn" onclick="changeQty(0,1)">+</button>
+          </div>
+          <div class="oi-price" id="price0">₹180</div>
+        </div>
+      </div>
+
+      <div class="order-item">
+        <div class="oi-left"><div class="oi-name">🥤 Mango Lassi</div><div class="oi-qty">2 × ₹60</div></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
+            <span class="qty-num" id="qty1">2</span>
+            <button class="qty-btn" onclick="changeQty(1,1)">+</button>
+          </div>
+          <div class="oi-price" id="price1">₹120</div>
+        </div>
+      </div>
+
+      <div class="order-item">
+        <div class="oi-left"><div class="oi-name">🥐 Garlic Naan</div><div class="oi-qty">1 × ₹40</div></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
+            <span class="qty-num" id="qty2">1</span>
+            <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+          </div>
+          <div class="oi-price" id="price2">₹40</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="bill-row"><span>Subtotal</span><span id="subtotal">₹340</span></div>
+        <div class="bill-row"><span>Delivery fee</span><span>₹30</span></div>
+        <div class="bill-row"><span>Taxes (5%)</span><span id="tax-val">₹17</span></div>
+        <div class="bill-total"><span>Total</span><span id="total-val">₹387</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Delivery Address</h3>
+      <div class="field"><label>Full Address</label><input type="text" placeholder="Hotel / Hostel name + room number"></div>
+      <div class="form-row">
+        <div class="field"><label>Area / Landmark</label><input type="text" placeholder="Near..."></div>
+        <div class="field"><label>Phone Number</label><input type="tel" placeholder="+91 ..."></div>
+      </div>
+      <div class="field"><label>Special Instructions</label><textarea placeholder="No onions, leave at reception, extra spicy, etc."></textarea></div>
+    </div>
+
+    <button class="btn-main" onclick="goStep(2)">Continue to Payment →</button>
+  </div>
+
+  <!-- ====== STEP 2: Payment ====== -->
+  <div class="step-section" id="sec2">
+
+    <div class="card">
+      <h3>Payment Method</h3>
+      <div class="pay-grid">
+        <div class="pay-opt selected" onclick="selectPay(this,'card')">
+          <div class="pay-icon">💳</div>
+          <div class="pay-label">Credit / Debit Card</div>
+        </div>
+        <div class="pay-opt" onclick="selectPay(this,'upi')">
+          <div class="pay-icon">📱</div>
+          <div class="pay-label">UPI / GPay</div>
+        </div>
+        <div class="pay-opt" onclick="selectPay(this,'cash')">
+          <div class="pay-icon">💵</div>
+          <div class="pay-label">Cash on Delivery</div>
+        </div>
+        <div class="pay-opt" onclick="selectPay(this,'paypal')">
+          <div class="pay-icon">🔵</div>
+          <div class="pay-label">PayPal</div>
+        </div>
+      </div>
+
+      <!-- Card fields -->
+      <div class="card-fields" id="card-fields">
+        <div class="field"><label>Card Number</label><input type="text" placeholder="1234  5678  9012  3456" maxlength="19" oninput="formatCard(this)"></div>
+        <div class="form-row">
+          <div class="field"><label>Expiry Date</label><input type="text" placeholder="MM / YY" maxlength="7"></div>
+          <div class="field"><label>CVV</label><input type="password" placeholder="•••" maxlength="3"></div>
+        </div>
+        <div class="field"><label>Name on Card</label><input type="text" placeholder="As printed on card"></div>
+      </div>
+
+      <!-- UPI field -->
+      <div id="upi-fields" style="display:none;">
+        <div class="field"><label>UPI ID</label><input type="text" placeholder="yourname@upi"></div>
+      </div>
+
+      <!-- Cash note -->
+      <div id="cash-note" style="display:none;padding:14px;background:var(--soft);border-radius:12px;border:1px solid var(--border);font-size:14px;color:var(--mid);">
+        💵 Pay in cash when your order arrives. Please keep exact change if possible.
+      </div>
+
+      <!-- PayPal -->
+      <div id="paypal-fields" style="display:none;">
+        <div class="field"><label>PayPal Email</label><input type="email" placeholder="you@paypal.com"></div>
+      </div>
+    </div>
+
+    <div class="total-bar">
+      <span class="label">Total to Pay</span>
+      <span class="amount" id="total-pay">₹387</span>
+    </div>
+
+    <button class="btn-main" onclick="goStep(3)">Pay <span id="pay-btn-amount">₹387</span> →</button>
+    <button class="btn-ghost" onclick="goStep(1)">← Back to Review</button>
+  </div>
+
+  <!-- ====== STEP 3: Tracking ====== -->
+  <div class="step-section" id="sec3">
+
+    <div class="card">
+      <div class="confirm-banner">
+        <span class="tick">🎉</span>
+        <h3>Order Confirmed!</h3>
+        <p>Your food is being prepared with love</p>
+        <p class="order-id">Order #LE‑2025‑0847</p>
+        <div class="eta-chip">
+          <div class="spinner"></div>
+          Estimated delivery: <strong>25–35 min</strong>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-event done">
+          <div class="tl-dot">✓</div>
+          <div class="tl-title">Order Placed</div>
+          <div class="tl-time">Just now · Payment confirmed</div>
+        </div>
+        <div class="tl-event done">
+          <div class="tl-dot">✓</div>
+          <div class="tl-title">Restaurant Accepted</div>
+          <div class="tl-time">2 minutes ago</div>
+        </div>
+        <div class="tl-event active">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Preparing Your Food</div>
+          <div class="tl-time">Est. 15 min remaining</div>
+        </div>
+        <div class="tl-event pending">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Out for Delivery</div>
+          <div class="tl-time">—</div>
+        </div>
+        <div class="tl-event pending">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Delivered — Enjoy! 🍽️</div>
+          <div class="tl-time">—</div>
+        </div>
+      </div>
+
+      <div class="rider-card">
+        <div class="rider-avatar">🛵</div>
+        <div class="rider-info">
+          <div class="rider-name">Rajan Kumar</div>
+          <div class="rider-meta">⭐ 4.9 · 1,200+ deliveries</div>
+        </div>
+        <button class="call-btn">📞 Call</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Order Receipt</h3>
+      <div class="bill-row"><span>Chicken Biryani ×1</span><span>₹180</span></div>
+      <div class="bill-row"><span>Mango Lassi ×2</span><span>₹120</span></div>
+      <div class="bill-row"><span>Garlic Naan ×1</span><span>₹40</span></div>
+      <div class="bill-row"><span>Delivery</span><span>₹30</span></div>
+      <div class="bill-row"><span>Taxes</span><span>₹17</span></div>
+      <div class="bill-total"><span>Total Paid</span><span>₹387</span></div>
+    </div>
+
+    <button class="btn-main" onclick="window.location.href='page2.html'">Order More Food 🍛</button>
+    <button class="btn-ghost" onclick="window.location.href='page1.html'">← Back to Home</button>
+  </div>
+
+</div>
+
+<script>
+/* ---- LANGUAGE SYSTEM ---- */
+let currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+const translations = {
+  en: { review: "Review", payment: "Payment", tracking: "Tracking", order_summary: "Order Summary —", delivery_address: "Delivery Address", continue_payment: "Continue to Payment →", back_review: "← Back to Review", payment_method: "Payment Method", total_pay: "Total to Pay", pay: "Pay", back_restaurants: "← Back to Restaurants", order_confirmed: "Order Confirmed!", food_prepared: "Your food is being prepared with love", order_receipt: "Order Receipt", order_more: "Order More Food 🍛", back_home: "← Back to Home" },
+  hi: { review: "समीक्षा", payment: "भुगतान", tracking: "ट्रैकिंग", order_summary: "ऑर्डर सारांश —", delivery_address: "डिलीवरी पता", continue_payment: "भुगतान जारी रखें →", back_review: "← समीक्षा पर वापस", payment_method: "भुगतान विधि", total_pay: "भुगतान योग्य कुल", pay: "भुगतान करें", back_restaurants: "← रेस्तरां पर वापस", order_confirmed: "ऑर्डर की पुष्टि!", food_prepared: "आपके भोजन को प्यार से तैयार किया जा रहा है", order_receipt: "ऑर्डर रसीद", order_more: "अधिक भोजन ऑर्डर करें 🍛", back_home: "← होम पर वापस" }
+};
+
+function t(key) {
+  return translations[currentLanguage]?.[key] || translations.en[key] || key;
+}
+
+// ---- Restaurant data ----
+const restaurants = [
+  { id:1, name:"Al Salam Biryani House" },
+  { id:2, name:"Green Leaf Veg Corner" },
+  { id:3, name:"Beach Juice Shack" },
+  { id:4, name:"Bake & Brew" },
+  { id:5, name:"Fort Fish Fry" },
+  { id:6, name:"Chai & Chat" },
+  { id:7, name:"Spice Route Restaurant" },
+  { id:8, name:"Sweet Moments Bakery" },
+];
+
+// ---- Load cart from localStorage ----
+let cartData = {};
+let restaurantId = 1;
+
+function loadCart() {
+  const saved = localStorage.getItem('orderCart');
+  cartData = saved ? JSON.parse(saved) : {};
+  const restoId = localStorage.getItem('restaurantId');
+  if (restoId) restaurantId = parseInt(restoId);
+  
+  if (Object.keys(cartData).length === 0) {
+    document.querySelector('.page-wrap').innerHTML = '<p style="text-align:center;padding:40px;font-size:16px;">Your cart is empty. <a href="page2.html">← Go back</a></p>';
+    return false;
+  }
+  return true;
+}
+
+// ---- Get restaurant name ----
+function getRestaurantName() {
+  const resto = restaurants.find(r => r.id === restaurantId);
+  return resto ? resto.name : 'Restaurant';
+}
+
+// ---- Rebuild items array from cart ----
+function rebuildItems() {
+  const newItems = [];
+  Object.entries(cartData).forEach(([name, data]) => {
+    newItems.push({ name, unitPrice: data.price, qty: data.qty });
+  });
+  return newItems;
+}
+
+let items = [];
+
+function changeQty(i, delta) {
+  items[i].qty = Math.max(1, items[i].qty + delta);
+  document.getElementById('qty'+i).textContent = items[i].qty;
+  document.getElementById('price'+i).textContent = '₹' + (items[i].unitPrice * items[i].qty);
+  recalc();
+}
+
+function recalc() {
+  const sub  = items.reduce((s,x) => s + x.unitPrice * x.qty, 0);
+  const tax  = Math.round(sub * 0.05);
+  const total = sub + 30 + tax;
+  document.getElementById('subtotal').textContent   = '₹'+sub;
+  document.getElementById('tax-val').textContent    = '₹'+tax;
+  document.getElementById('total-val').textContent  = '₹'+total;
+  document.getElementById('total-pay').textContent  = '₹'+total;
+  document.getElementById('pay-btn-amount').textContent = '₹'+total;
+}
+
+// ---- Render order items dynamically ----
+function renderOrderItems() {
+  const container = document.querySelector('.card h3').parentElement;
+  let html = '<h3>Order Summary — ' + getRestaurantName() + '</h3>';
+
+  items.forEach((item, i) => {
+    html += `
+      <div class="order-item">
+        <div class="oi-left"><div class="oi-name">${item.name}</div><div class="oi-qty">${item.qty} × ₹${item.unitPrice}</div></div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+            <span class="qty-num" id="qty${i}">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+          </div>
+          <div class="oi-price" id="price${i}">₹${item.unitPrice * item.qty}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    <div style="margin-top:16px;">
+      <div class="bill-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+      <div class="bill-row"><span>Delivery fee</span><span>₹30</span></div>
+      <div class="bill-row"><span>Taxes (5%)</span><span id="tax-val">₹0</span></div>
+      <div class="bill-total"><span>Total</span><span id="total-val">₹0</span></div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// ---- Render receipt dynamically ----
+function renderReceipt() {
+  const receiptContainer = document.querySelector('#sec3 .card:nth-of-type(2)');
+  let receiptHtml = '<h3>Order Receipt</h3>';
+
+  items.forEach(item => {
+    receiptHtml += `<div class="bill-row"><span>${item.name} ×${item.qty}</span><span>₹${item.unitPrice * item.qty}</span></div>`;
+  });
+
+  const sub = items.reduce((s,x) => s + x.unitPrice * x.qty, 0);
+  const tax = Math.round(sub * 0.05);
+  const total = sub + 30 + tax;
+
+  receiptHtml += `
+    <div class="bill-row"><span>Delivery</span><span>₹30</span></div>
+    <div class="bill-row"><span>Taxes</span><span>₹${tax}</span></div>
+    <div class="bill-total"><span>Total Paid</span><span>₹${total}</span></div>
+  `;
+
+  receiptContainer.innerHTML = receiptHtml;
+}
+
+// ---- Step nav ----
+function goStep(n) {
+  for(let i=1;i<=3;i++) {
+    document.getElementById('sec'+i).classList.toggle('active', i===n);
+    const sn = document.getElementById('sn'+i);
+    sn.className = 'snav-item ' + (i < n ? 'done' : i===n ? 'active' : 'pending');
+    if(i<3) document.getElementById('sl'+i).className = 'snav-line' + (i < n ? ' done' : '');
+  }
+  if (n === 3) renderReceipt();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- Payment selection ----
+function selectPay(el, type) {
+  document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card-fields').style.display   = type==='card'   ? 'block' : 'none';
+  document.getElementById('upi-fields').style.display    = type==='upi'    ? 'block' : 'none';
+  document.getElementById('cash-note').style.display     = type==='cash'   ? 'block' : 'none';
+  document.getElementById('paypal-fields').style.display = type==='paypal' ? 'block' : 'none';
+}
+
+// ---- Card number formatter ----
+function formatCard(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.replace(/(.{4})/g,'$1  ').trim();
+}
+
+// Init
+if (loadCart()) {
+  items = rebuildItems();
+  renderOrderItems();
+  recalc();
+}
+</script>
+</body>
+</html>
